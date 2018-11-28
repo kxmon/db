@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>这是分分</title>
+	</head>
+	<style>
+		*{
+			margin:0;
+			padding: 0;
+		}
+		#box{
+			width: 350px;
+			height: 350px;
+			border:#000000 solid 1px;
+			margin:200px;
+			position: relative;
+		}
+		#mask{
+			width: 175px;
+			height: 175px;
+			background: gray;
+			opacity: .3;
+			position: absolute;
+			left: 0;
+			top: 0;
+			display: none;
+			cursor: move;
+		}
+		#big{
+			width: 400px;
+			height: 400px;
+			border: #000000 solid 1px;
+			position: absolute;
+			left: 360px;
+			top: 0;
+			overflow: hidden;
+			display: none;
+		}
+		#bigImg{
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+	</style>
+	<body>
+		<div id="box">
+			<div id="small">
+				<img src="001.jpg" alt="" />
+				<div id="mask"></div>
+			</div>
+			<div id="big">
+				<img src="0001.jpg" alt="" id="bigImg"/>
+			</div>
+		</div>
+	</body>
+</html>
+<script>
+	/*
+	思路
+		1、鼠标移入移出到 small上  显示和隐藏mask、big
+		2、鼠标在small上移动时， 设置mask跟随鼠标移动
+		3、大图随着mask的反方向移动
+	* */
+	small.onmouseover = function(){
+		mask.style.display = "block";
+		big.style.display = "block";
+	}
+	small.onmouseout = function(){
+		mask.style.display = "none";
+		big.style.display = "none";
+	}
+	small.onmousemove = function(e){
+		var e = e || event;
+		var x = e.pageX - mask.offsetWidth/2 - box.offsetLeft;
+		var y = e.pageY - mask.offsetHeight/2 - box.offsetTop;
+		//获取mask的最大的left和top值
+		var maxL = box.offsetWidth - mask.offsetWidth ;
+		var maxT = box.offsetHeight - mask.offsetHeight ;
+		
+		//边界处理
+		x = x < 0 ? 0 : ( x > maxL ? maxL : x );
+		y = y < 0 ? 0 : ( y > maxT ? maxT : y );
+		
+		//获取大图向左和向上移动的距离 x1  y1
+		//大图移动的距离x1/(大图宽度-大图可视区宽度)  =  mask移动的距离 / (小图宽度-mask宽度)
+		//如果保证mask的放大区域 准确的显示到 大图显示区中，存在一个比例关系：
+		//  小图显示区的宽度 /大图显示区的宽度  = 小图宽度/大图宽度  = mask移动的距离/大图移动的距离
+		/*var x1 = x*(bigImg.offsetWidth-big.offsetWidth)/(box.offsetWidth - mask.offsetWidth);
+		var y1 = y*(bigImg.offsetHeight-big.offsetHeight)/(box.offsetHeight - mask.offsetHeight);
+		*/	
+		
+		var x1 = x*(bigImg.offsetWidth)/(box.offsetWidth);
+		var y1 = y*(bigImg.offsetHeight)/(box.offsetHeight);
+
+		//设置mask的left和top值
+		mask.style.left = x + "px";
+		mask.style.top = y + "px";
+		//设置大图移动的距离left 和 top  方向和mask相反
+		bigImg.style.left = -x1 + "px";
+		bigImg.style.top = -y1 + "px";
+	}
+</script>
